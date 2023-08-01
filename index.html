@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <link rel="stylesheet" href="./css/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div class="wrapper" id="app">
+        <div class="form-input">
+            <div :class="{errors:errors}">
+                <label for="fdd">Day</label>
+                <input type="text" id="fdd" v-model="fday" name="fdd" type="number" placeholder="DD" @input="validateInput">
+                <p v-if="errors">This fiield is required</p>
+            </div>
+            <div :class="{errors:errors}">
+                <label for="fmonth">Month</label>
+                <input type="text" id="fmonth" v-model="fmonth" name="fmonth" type="number" placeholder="MM" @input="validateInput">
+                <p v-if="errors">This fiield is required</p>
+            </div>
+            <div :class="{errors:errors}">
+                <label for="fyear">Year</label>
+                <input type="text" id="fyear" v-model="fyear" name="fyear" type="number" placeholder="YEAR" @input="validateInput">
+                <p v-if="errors">This fiield is required</p>
+            </div>
+
+        </div>
+        <div class="form-button">
+            <a href="#"  v-on:click="birthDate">
+                <img src="./assets/images/icon-arrow.svg" alt="">
+            </a>
+        </div>
+        <div class="form-data">
+            <h2><span class="ynumb">{{ynumb}}</span> years</h2>
+            <h2><span class="mnumb">{{mnumb}}</span> months</h2>
+            <h2><span class="dnumb">{{dnumb}}</span> days</h2>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+              errors: false,
+              fday:'',
+              fmonth: '',
+              fyear: '',
+              ynumb: '--',
+              mnumb: '--',
+              dnumb: '--'
+            },
+            methods: {
+                validateInput() {
+                    // Remove any non-numeric characters from the input
+                    this.fday = this.fday.replace(/\D/g, "");
+                    this.fmonth = this.fmonth.replace(/\D/g, "");                    
+                    this.fyear = this.fyear.replace(/\D/g, "");
+                },
+                birthDate() {
+                    if (this.fday && this.fmonth && this.fyear) {
+                        this.errors = false;
+                        const birthYear = this.fyear;
+                        const birthMonth = this.fmonth; 
+                        const birthDay = this.fday;
+
+                        let result = isNaN(birthYear);
+
+
+                        const birthDate = new Date(birthYear, birthMonth, birthDay);
+                        const today = new Date();
+                        let age = today.getFullYear() - birthDate.getFullYear();
+
+                        const isBirthdayPassed = today.getMonth() > birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+                        if (!isBirthdayPassed) {
+                        age--;
+                        }
+                        const months = age * 12 + (today.getMonth() - birthDate.getMonth());
+
+                        const oneDayInMilliseconds = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+                        const days = Math.floor((today - birthDate) / oneDayInMilliseconds);
+
+                        this.mnumb = months;
+                        this.ynumb = age;
+                        this.dnumb = days;
+                    } else { this.errors = true; }
+
+                },
+            }
+          })
+      </script>
+
+</body>
+</html>
